@@ -34,7 +34,7 @@ def text2words(text: str, to_lower: bool) -> list[str]:
 def main(config: SplitterConfig):
     os.makedirs(config.data_folder, exist_ok=True)
 
-    texts: list[str] = fetch_20newsgroups(subset="all", data_home=config.cache_folder).data
+    texts: list[str] = fetch_20newsgroups(subset="all", shuffle=False, data_home=config.cache_folder).data
     total_words = 0
     for i, text in enumerate(tqdm.tqdm(texts, desc="processing texts")):
         words = text2words(text, config.to_lower)
