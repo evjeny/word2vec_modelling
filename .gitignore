@@ -135,3 +135,6 @@ dmypy.json
 dataset_cache/
 dataset_texts/
 folds.txt
+
+# Model files
+word2vec_models/
