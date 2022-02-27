@@ -6,6 +6,7 @@ from config_manager.config import Config
 import torch
 from torch.optim import Adam
 from torch.nn.functional import cross_entropy
+import tqdm
 
 from word2vec_model import Word2Vec, optimization_step
 
@@ -66,9 +67,11 @@ def train_single_model(fold_words: list[list[str]], config: Word2VecConfig) -> W
         t1 = time.time()
         epoch_loss = 0
 
-        for x_batch, y_batch in batch_iterator(
-                fold_word_indices, config.context, config.batch_size
-        ):
+        batches = list(batch_iterator(
+            fold_word_indices, config.context, config.batch_size
+        ))
+
+        for x_batch, y_batch in tqdm.tqdm(batches, desc=f"Epoch {epoch}"):
             x_batch = torch.tensor(x_batch, dtype=torch.long, device=device)
             y_batch = torch.tensor(y_batch, dtype=torch.long, device=device)
 
