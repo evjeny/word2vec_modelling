@@ -130,3 +130,7 @@ dmypy.json
 
 # IDE files
 .idea/
+
+# Dataset files
+dataset_cache/
+dataset_texts/
