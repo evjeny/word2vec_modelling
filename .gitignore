@@ -134,3 +134,4 @@ dmypy.json
 # Dataset files
 dataset_cache/
 dataset_texts/
+folds.txt
