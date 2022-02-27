@@ -1,0 +1,14 @@
+certifi==2021.10.8
+config-manager-evjeny==0.3.0
+joblib==1.1.0
+numpy==1.22.2
+Pillow==9.0.1
+pip==21.2.4
+scikit-learn==1.0.2
+scipy==1.8.0
+setuptools==58.0.4
+threadpoolctl==3.1.0
+torch==1.10.2
+tqdm==4.62.3
+typing_extensions==4.1.1
+wheel==0.37.1
