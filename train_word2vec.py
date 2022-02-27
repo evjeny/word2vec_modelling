@@ -81,7 +81,8 @@ def train_single_model(fold_words: list[list[str]], config: Word2VecConfig) -> W
             epoch_loss += float(loss)
 
         t2 = time.time()
-        print(f"[Epoch {epoch}/{config.epochs}]: loss={epoch_loss:.4f}, time={t2 - t1} s")
+        mean_loss = epoch_loss / len(batch_iterator)
+        print(f"[Epoch {epoch}/{config.epochs}]: loss={mean_loss:.4f}, time={t2 - t1} s")
 
     return model
 
