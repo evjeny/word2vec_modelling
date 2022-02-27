@@ -107,7 +107,7 @@ def main(config: Word2VecConfig):
     for model_num, fold in enumerate(folds_paths):
         fold_words = read_fold_words(fold, config.word_separator)
         model = train_single_model(fold_words, config)
-        torch.save(model.state_dict(), os.path.join(config.models_folder, f"word2vec_{model_num}"))
+        torch.save(model.state_dict(), os.path.join(config.models_folder, f"word2vec_{model_num}.pth"))
 
 
 if __name__ == '__main__':
