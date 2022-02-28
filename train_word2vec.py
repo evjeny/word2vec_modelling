@@ -92,7 +92,7 @@ def train_single_model(
         mean_loss = epoch_loss / len(batches)
         print(f"[Epoch {epoch}/{config.epochs}]: loss={mean_loss:.4f}, time={t2 - t1} s")
 
-    return model
+    return model, mapping
 
 
 def read_fold_words(paths: list[str], sep: str) -> list[list[str]]:
