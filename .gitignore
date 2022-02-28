@@ -138,3 +138,4 @@ folds.txt
 
 # Model files
 word2vec_models/
+mapping_models/

@@ -57,10 +57,12 @@ class Word2Vec(nn.Module):
             embedding_dim,
             self.dict_size+1
         )
+
+    def get_embedding(self, x: torch.Tensor) -> torch.Tensor:
+        return self.embedding(x).mean(axis=1)
     
     def forward(self, x):
-        x = self.embedding(x)
-        x = x.mean(axis=1)
+        x = self.get_embedding(x)
         x = self.embedding2word(x)
         return x
     
