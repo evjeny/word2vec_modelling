@@ -8,7 +8,7 @@ from torch.optim import Adam
 from torch.nn.functional import cross_entropy
 import tqdm
 
-from word2vec_model import Word2Vec, optimization_step
+from word2vec_model import Word2Vec, Word2VecMapping, optimization_step, dump_word2vec
 
 
 class Word2VecConfig(Config):
@@ -48,28 +48,36 @@ def batch_iterator(
             yield x_batch, y_batch
 
 
-def train_single_model(fold_words: list[list[str]], config: Word2VecConfig) -> Word2Vec:
+def train_single_model(
+    fold_words: list[list[str]],
+    config: Word2VecConfig
+) -> tuple[Word2Vec, Word2VecMapping]:
+
     all_words = []
     for words in fold_words:
         all_words.extend(words)
-    all_words = set(all_words)
+    all_words = list(set(all_words))
+
+    mapping = Word2VecMapping(all_words)
 
     device = torch.device(config.device)
+    model = Word2Vec(
+        dict_size=mapping.get_dict_size(),
+        embedding_dim=config.embedding_dim
+    ).to(device)
 
-    model = Word2Vec(all_words, embedding_dim=config.embedding_dim).to(device)
-    fold_word_indices = [
-        model.sequence_to_indices(document)
-        for document in fold_words
-    ]
     optimizer = Adam(model.parameters(), lr=config.lr)
 
+    fold_word_indices = [
+        mapping.sequence_to_indices(document)
+        for document in fold_words
+    ]
+    batches = list(batch_iterator(
+        fold_word_indices, config.context, config.batch_size
+    ))
     for epoch in range(1, config.epochs + 1):
         t1 = time.time()
         epoch_loss = 0
-
-        batches = list(batch_iterator(
-            fold_word_indices, config.context, config.batch_size
-        ))
 
         for x_batch, y_batch in tqdm.tqdm(batches, desc=f"Epoch {epoch}"):
             x_batch = torch.tensor(x_batch, dtype=torch.long, device=device)
@@ -96,19 +104,23 @@ def read_fold_words(paths: list[str], sep: str) -> list[list[str]]:
 
 
 def main(config: Word2VecConfig):
-    folds_paths = []
+    folds_paths: list[list[str]] = []
     with open(config.fold_list_file) as f:
-        for line in f.readlines():
+        for fold_description in f.readlines():
             folds_paths.append([
                 os.path.join(config.texts_folder, filename)
-                for filename in line.strip().split(",")
+                for filename in fold_description.strip().split(",")
             ])
 
     os.makedirs(config.models_folder, exist_ok=True)
     for model_num, fold in enumerate(folds_paths):
         fold_words = read_fold_words(fold, config.word_separator)
-        model = train_single_model(fold_words, config)
-        torch.save(model.state_dict(), os.path.join(config.models_folder, f"word2vec_{model_num}.pth"))
+        model, mapping = train_single_model(fold_words, config)
+        
+        dump_word2vec(
+            config.models_folder, f"word2vec_{model_num}",
+            model, mapping
+        )
 
 
 if __name__ == '__main__':
