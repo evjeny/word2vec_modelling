@@ -24,6 +24,12 @@ class Mapper(nn.Module):
             bias=False
         )
 
+    def forward_a2b(self, a: torch.Tensor) -> torch.Tensor:
+        return self.a2b(a)
+
+    def forward_b2a(self, b: torch.Tensor) -> torch.Tensor:
+        return self.b2a(b)
+
     def forward(self, a: torch.Tensor, b: torch.Tensor):
         a_back = self.b2a(self.a2b(a))
         b_back = self.a2b(self.b2a(b))

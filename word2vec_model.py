@@ -60,10 +60,13 @@ class Word2Vec(nn.Module):
 
     def get_embedding(self, x: torch.Tensor) -> torch.Tensor:
         return self.embedding(x).mean(axis=1)
+
+    def get_word_probas(self, embedding: torch.Tensor) -> torch.Tensor:
+        return self.embedding2word(embedding)
     
     def forward(self, x):
         x = self.get_embedding(x)
-        x = self.embedding2word(x)
+        x = self.get_word_probas(x)
         return x
     
     def get_json(self) -> dict:
