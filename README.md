@@ -7,6 +7,12 @@ Code is available on [Google colab](https://colab.research.google.com/github/evj
 
 *Note: set accelerator device to GPU: **Menu -> Runtime -> Change runtime -> Hardware acceleration = GPU***
 
+## Dependencies
+
+Python: `python 3.9`
+
+Packages: `python -m pip install -r requirements.txt`
+
 ## Scripts
 
 ### [split_texts.py](split_texts.py)
