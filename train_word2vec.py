@@ -1,3 +1,4 @@
+from collections import Counter
 import os
 import time
 from typing import Iterator
@@ -18,6 +19,7 @@ class Word2VecConfig(Config):
 
     embedding_dim: int = 300
     context: int = 2
+    min_occurrences: int = 3
     epochs: int = 5
     lr: float = 1e-3
     batch_size: int = 5
@@ -48,16 +50,21 @@ def batch_iterator(
             yield x_batch, y_batch
 
 
+def filter_words(fold_words: list[list[str]], min_occurrences: int) -> list[str]:
+    all_words = []
+    for words in fold_words:
+        all_words.extend(words)
+    counts = Counter(all_words)
+    return [word for word, count in counts.items() if count >= min_occurrences]
+
+
 def train_single_model(
     fold_words: list[list[str]],
     config: Word2VecConfig
 ) -> tuple[Word2Vec, Word2VecMapping]:
 
-    all_words = []
-    for words in fold_words:
-        all_words.extend(words)
-    all_words = list(set(all_words))
-
+    all_words = filter_words(fold_words, config.min_occurrences)
+    print(f"Found {len(all_words)} unique words in training set")
     mapping = Word2VecMapping(all_words)
 
     device = torch.device(config.device)
